@@ -59,10 +59,10 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/macbook-pro-14-front.png",
         thumbnail: "/frames/macbook-pro-14-front.png",
         screenRegion: {
-          topLeft: { x: 240, y: 44 },
-          topRight: { x: 2800, y: 44 },
-          bottomLeft: { x: 240, y: 1708 },
-          bottomRight: { x: 2800, y: 1708 },
+          topLeft: { x: 120, y: 120 },
+          topRight: { x: 2920, y: 120 },
+          bottomLeft: { x: 120, y: 1820 },
+          bottomRight: { x: 2920, y: 1820 },
         },
       },
       {
@@ -104,8 +104,8 @@ export const devices: DeviceConfig[] = [
         screenRegion: {
           topLeft: { x: 50, y: 50 },
           topRight: { x: 2098, y: 50 },
-          bottomLeft: { x: 50, y: 2782 },
-          bottomRight: { x: 2098, y: 2782 },
+          bottomLeft: { x: 50, y: 2842 },
+          bottomRight: { x: 2098, y: 2842 },
         },
       },
       {
