@@ -24,42 +24,30 @@ export function computeCanvasDimensions(
   };
 }
 
-export interface CoverCrop {
-  sx: number;
-  sy: number;
-  sw: number;
-  sh: number;
+/**
+ * Compute how to draw the screenshot inside the target area using "contain" fit.
+ * The image is scaled to fit entirely within the target, maintaining aspect ratio.
+ * Returns the destination rectangle (dx, dy, dw, dh) within the target.
+ */
+export interface ContainFit {
+  dx: number;
+  dy: number;
+  dw: number;
+  dh: number;
 }
 
-export function computeCoverCrop(
+export function computeContainFit(
   imgW: number,
   imgH: number,
   targetW: number,
   targetH: number
-): CoverCrop {
-  const imgAspect = imgW / imgH;
-  const targetAspect = targetW / targetH;
-
-  let sw: number, sh: number, sx: number, sy: number;
-
-  if (imgAspect > targetAspect) {
-    sh = imgH;
-    sw = Math.round(imgH * targetAspect);
-    sx = Math.round((imgW - sw) / 2);
-    sy = 0;
-  } else if (imgAspect < targetAspect) {
-    sw = imgW;
-    sh = Math.round(imgW / targetAspect);
-    sx = 0;
-    sy = Math.round((imgH - sh) / 2);
-  } else {
-    sx = 0;
-    sy = 0;
-    sw = imgW;
-    sh = imgH;
-  }
-
-  return { sx, sy, sw, sh };
+): ContainFit {
+  const scale = Math.min(targetW / imgW, targetH / imgH);
+  const dw = Math.round(imgW * scale);
+  const dh = Math.round(imgH * scale);
+  const dx = Math.round((targetW - dw) / 2);
+  const dy = Math.round((targetH - dh) / 2);
+  return { dx, dy, dw, dh };
 }
 
 function screenRegionBounds(region: ScreenRegion): {
@@ -100,20 +88,24 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   }
 
-  // 2. Screenshot — perspective-transformed into screen region
+  // 2. Screenshot — scaled to contain (fit entirely, centered) into screen region
   const bounds = screenRegionBounds(angle.screenRegion);
-  const crop = computeCoverCrop(
+  const fit = computeContainFit(
     screenshot.naturalWidth,
     screenshot.naturalHeight,
     bounds.width,
     bounds.height
   );
 
-  const cropCanvas = document.createElement("canvas");
-  cropCanvas.width = bounds.width;
-  cropCanvas.height = bounds.height;
-  const cropCtx = cropCanvas.getContext("2d")!;
-  cropCtx.drawImage(screenshot, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, bounds.width, bounds.height);
+  // Draw screenshot onto a temp canvas at the screen region size, centered
+  const fitCanvas = document.createElement("canvas");
+  fitCanvas.width = bounds.width;
+  fitCanvas.height = bounds.height;
+  const fitCtx = fitCanvas.getContext("2d")!;
+  // Fill with white so the letterbox area isn't transparent (would show background through frame)
+  fitCtx.fillStyle = "#FFFFFF";
+  fitCtx.fillRect(0, 0, bounds.width, bounds.height);
+  fitCtx.drawImage(screenshot, 0, 0, screenshot.naturalWidth, screenshot.naturalHeight, fit.dx, fit.dy, fit.dw, fit.dh);
 
   const offsetRegion: ScreenRegion = {
     topLeft: { x: angle.screenRegion.topLeft.x + offsetX, y: angle.screenRegion.topLeft.y + offsetY },
@@ -122,7 +114,7 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     bottomRight: { x: angle.screenRegion.bottomRight.x + offsetX, y: angle.screenRegion.bottomRight.y + offsetY },
   };
 
-  drawPerspective(ctx, cropCanvas, bounds.width, bounds.height, offsetRegion);
+  drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion);
 
   // 3. Device frame on top
   ctx.setTransform(1, 0, 0, 1, 0, 0);

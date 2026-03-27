@@ -1,8 +1,7 @@
 import { DeviceConfig } from "./types";
 
-// Screen regions are placeholder values. They MUST be updated after
-// sourcing actual frame PNGs. Measure the quadrilateral screen corners
-// from each frame PNG in an image editor.
+// Screen region coordinates from MockUPhone (mockuphone.com).
+// Format: [topLeft, topRight, bottomRight, bottomLeft] → converted to our quad format.
 
 export const devices: DeviceConfig[] = [
   {
@@ -11,39 +10,41 @@ export const devices: DeviceConfig[] = [
     icon: "/icons/iphone.svg",
     angles: [
       {
-        id: "front",
-        name: "Front",
-        frameSrc: "/frames/iphone-15-pro-front.png",
-        thumbnail: "/frames/iphone-15-pro-front.png",
+        id: "portrait",
+        name: "Portrait",
+        frameSrc: "/frames/iphone-15-pro-portrait.png",
+        thumbnail: "/frames/iphone-15-pro-portrait.png",
         screenRegion: {
-          topLeft: { x: 40, y: 40 },
-          topRight: { x: 433, y: 40 },
-          bottomLeft: { x: 40, y: 932 },
-          bottomRight: { x: 433, y: 932 },
+          topLeft: { x: 120, y: 120 },
+          topRight: { x: 1299, y: 120 },
+          bottomLeft: { x: 120, y: 2676 },
+          bottomRight: { x: 1299, y: 2676 },
         },
       },
       {
-        id: "tilt",
-        name: "Slight Tilt",
-        frameSrc: "/frames/iphone-15-pro-tilt.png",
-        thumbnail: "/frames/iphone-15-pro-tilt.png",
+        id: "landscape",
+        name: "Landscape",
+        frameSrc: "/frames/iphone-15-pro-landscape.png",
+        thumbnail: "/frames/iphone-15-pro-landscape.png",
         screenRegion: {
-          topLeft: { x: 55, y: 30 },
-          topRight: { x: 420, y: 50 },
-          bottomLeft: { x: 55, y: 920 },
-          bottomRight: { x: 420, y: 940 },
+          // MockUPhone coords: [[2634,98],[2634,1272],[98,1272],[98,98]]
+          topLeft: { x: 98, y: 98 },
+          topRight: { x: 2634, y: 98 },
+          bottomLeft: { x: 98, y: 1272 },
+          bottomRight: { x: 2634, y: 1272 },
         },
       },
       {
-        id: "isometric",
-        name: "Isometric",
-        frameSrc: "/frames/iphone-15-pro-isometric.png",
-        thumbnail: "/frames/iphone-15-pro-isometric.png",
+        id: "left",
+        name: "Perspective",
+        frameSrc: "/frames/iphone-15-pro-left.png",
+        thumbnail: "/frames/iphone-15-pro-left.png",
         screenRegion: {
-          topLeft: { x: 80, y: 60 },
-          topRight: { x: 400, y: 20 },
-          bottomLeft: { x: 80, y: 900 },
-          bottomRight: { x: 400, y: 860 },
+          // MockUPhone coords: [[571,177],[1684,239],[1210,2927],[144,2607]]
+          topLeft: { x: 571, y: 177 },
+          topRight: { x: 1684, y: 239 },
+          bottomLeft: { x: 144, y: 2607 },
+          bottomRight: { x: 1210, y: 2927 },
         },
       },
     ],
@@ -59,34 +60,11 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/macbook-pro-14-front.png",
         thumbnail: "/frames/macbook-pro-14-front.png",
         screenRegion: {
-          topLeft: { x: 120, y: 120 },
-          topRight: { x: 2920, y: 120 },
-          bottomLeft: { x: 120, y: 1820 },
-          bottomRight: { x: 2920, y: 1820 },
-        },
-      },
-      {
-        id: "tilt",
-        name: "Slight Tilt",
-        frameSrc: "/frames/macbook-pro-14-tilt.png",
-        thumbnail: "/frames/macbook-pro-14-tilt.png",
-        screenRegion: {
-          topLeft: { x: 280, y: 30 },
-          topRight: { x: 2760, y: 60 },
-          bottomLeft: { x: 280, y: 1680 },
-          bottomRight: { x: 2760, y: 1710 },
-        },
-      },
-      {
-        id: "isometric",
-        name: "Isometric",
-        frameSrc: "/frames/macbook-pro-14-isometric.png",
-        thumbnail: "/frames/macbook-pro-14-isometric.png",
-        screenRegion: {
-          topLeft: { x: 300, y: 80 },
-          topRight: { x: 2700, y: 20 },
-          bottomLeft: { x: 300, y: 1650 },
-          bottomRight: { x: 2700, y: 1590 },
+          // MockUPhone coords: [[459,299],[3483,299],[3483,2263],[459,2263]]
+          topLeft: { x: 459, y: 299 },
+          topRight: { x: 3483, y: 299 },
+          bottomLeft: { x: 459, y: 2263 },
+          bottomRight: { x: 3483, y: 2263 },
         },
       },
     ],
@@ -97,39 +75,42 @@ export const devices: DeviceConfig[] = [
     icon: "/icons/ipad.svg",
     angles: [
       {
-        id: "front",
-        name: "Front",
-        frameSrc: "/frames/ipad-pro-front.png",
-        thumbnail: "/frames/ipad-pro-front.png",
+        id: "portrait",
+        name: "Portrait",
+        frameSrc: "/frames/ipad-pro-portrait.png",
+        thumbnail: "/frames/ipad-pro-portrait.png",
         screenRegion: {
-          topLeft: { x: 50, y: 50 },
-          topRight: { x: 2098, y: 50 },
-          bottomLeft: { x: 50, y: 2842 },
-          bottomRight: { x: 2098, y: 2842 },
+          // MockUPhone coords: [[110,110],[1778,110],[1778,2498],[110,2498]]
+          topLeft: { x: 110, y: 110 },
+          topRight: { x: 1778, y: 110 },
+          bottomLeft: { x: 110, y: 2498 },
+          bottomRight: { x: 1778, y: 2498 },
         },
       },
       {
-        id: "tilt",
-        name: "Slight Tilt",
-        frameSrc: "/frames/ipad-pro-tilt.png",
-        thumbnail: "/frames/ipad-pro-tilt.png",
+        id: "landscape",
+        name: "Landscape",
+        frameSrc: "/frames/ipad-pro-landscape.png",
+        thumbnail: "/frames/ipad-pro-landscape.png",
         screenRegion: {
-          topLeft: { x: 70, y: 40 },
-          topRight: { x: 2080, y: 60 },
-          bottomLeft: { x: 70, y: 2770 },
-          bottomRight: { x: 2080, y: 2790 },
+          // MockUPhone coords: [[2498,110],[2498,1778],[110,1778],[110,110]]
+          topLeft: { x: 110, y: 110 },
+          topRight: { x: 2498, y: 110 },
+          bottomLeft: { x: 110, y: 1778 },
+          bottomRight: { x: 2498, y: 1778 },
         },
       },
       {
-        id: "isometric",
-        name: "Isometric",
-        frameSrc: "/frames/ipad-pro-isometric.png",
-        thumbnail: "/frames/ipad-pro-isometric.png",
+        id: "right",
+        name: "Perspective",
+        frameSrc: "/frames/ipad-pro-right.png",
+        thumbnail: "/frames/ipad-pro-right.png",
         screenRegion: {
-          topLeft: { x: 100, y: 80 },
-          topRight: { x: 2050, y: 20 },
-          bottomLeft: { x: 100, y: 2740 },
-          bottomRight: { x: 2050, y: 2680 },
+          // MockUPhone coords: [[172,216],[1461.5,258.5],[2012,1981],[666,2046]]
+          topLeft: { x: 172, y: 216 },
+          topRight: { x: 1462, y: 259 },
+          bottomLeft: { x: 666, y: 2046 },
+          bottomRight: { x: 2012, y: 1981 },
         },
       },
     ],

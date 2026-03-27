@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeCanvasDimensions, computeCoverCrop } from "./composite";
+import { computeCanvasDimensions, computeContainFit } from "./composite";
 
 describe("computeCanvasDimensions", () => {
   it("adds 10% padding on each side", () => {
@@ -11,28 +11,34 @@ describe("computeCanvasDimensions", () => {
   });
 });
 
-describe("computeCoverCrop", () => {
-  it("crops width when image is wider than target", () => {
-    const crop = computeCoverCrop(1600, 900, 900, 900);
-    expect(crop.sx).toBeGreaterThan(0);
-    expect(crop.sy).toBe(0);
-    expect(crop.sw).toBe(900);
-    expect(crop.sh).toBe(900);
+describe("computeContainFit", () => {
+  it("scales down wide image to fit width, centers vertically", () => {
+    // Image: 1600x900 (16:9), Target: 900x900 (1:1)
+    // scale = min(900/1600, 900/900) = min(0.5625, 1) = 0.5625
+    // dw = 900, dh = 506, dx = 0, dy = 197
+    const fit = computeContainFit(1600, 900, 900, 900);
+    expect(fit.dw).toBe(900);
+    expect(fit.dh).toBe(506);
+    expect(fit.dx).toBe(0);
+    expect(fit.dy).toBe(197);
   });
 
-  it("crops height when image is taller than target", () => {
-    const crop = computeCoverCrop(900, 1600, 900, 900);
-    expect(crop.sx).toBe(0);
-    expect(crop.sy).toBeGreaterThan(0);
-    expect(crop.sw).toBe(900);
-    expect(crop.sh).toBe(900);
+  it("scales down tall image to fit height, centers horizontally", () => {
+    // Image: 900x1600 (9:16), Target: 900x900 (1:1)
+    // scale = min(900/900, 900/1600) = min(1, 0.5625) = 0.5625
+    // dw = 506, dh = 900, dx = 197, dy = 0
+    const fit = computeContainFit(900, 1600, 900, 900);
+    expect(fit.dw).toBe(506);
+    expect(fit.dh).toBe(900);
+    expect(fit.dx).toBe(197);
+    expect(fit.dy).toBe(0);
   });
 
-  it("no crop when aspect ratios match", () => {
-    const crop = computeCoverCrop(1920, 1080, 960, 540);
-    expect(crop.sx).toBe(0);
-    expect(crop.sy).toBe(0);
-    expect(crop.sw).toBe(1920);
-    expect(crop.sh).toBe(1080);
+  it("fills exactly when aspect ratios match", () => {
+    const fit = computeContainFit(1920, 1080, 960, 540);
+    expect(fit.dx).toBe(0);
+    expect(fit.dy).toBe(0);
+    expect(fit.dw).toBe(960);
+    expect(fit.dh).toBe(540);
   });
 });
