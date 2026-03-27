@@ -93,11 +93,11 @@ export default function Home() {
   const canExport = !!uploadedImage && !!frameImage;
 
   return (
-    <div className="lg:h-screen flex flex-col max-w-[1920px] mx-auto w-full">
+    <div className="lg:h-screen flex flex-col max-w-[1920px] mx-auto w-full border-x border-border">
       <Header onExport={handleExport} canExport={canExport} />
 
       <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
-        <aside className="w-full lg:w-80 border-r p-4 space-y-6 lg:overflow-y-auto shrink-0 order-2 lg:order-1">
+        <aside className="w-full lg:w-80 border-r p-4 space-y-6 lg:overflow-y-auto shrink-0 order-2 lg:order-1 bg-background">
           <UploadZone
             uploadedImage={uploadedImage}
             uploadedFileName={uploadedFileName}
@@ -128,7 +128,7 @@ export default function Home() {
           />
         </aside>
 
-        <main className="flex-1 flex order-1 lg:order-2 min-h-[300px] lg:min-h-0">
+        <main className="flex-1 flex order-1 lg:order-2 min-h-[300px] lg:min-h-0 bg-muted/30">
           <MockupPreview
             screenshot={uploadedImage}
             frameImage={frameImage}
