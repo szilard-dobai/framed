@@ -73,7 +73,14 @@ export function MockupPreview({
     }
 
     ctx.drawImage(result, 0, 0, displayCanvas.width, displayCanvas.height);
-  }, [screenshot, frameImage, angle, backgroundColor, transparent, onCanvasReady]);
+  }, [
+    screenshot,
+    frameImage,
+    angle,
+    backgroundColor,
+    transparent,
+    onCanvasReady,
+  ]);
 
   if (frameError) {
     return (
@@ -108,7 +115,7 @@ export function MockupPreview({
     >
       <canvas ref={canvasRef} className="max-w-full max-h-full" />
       <p className="text-xs text-muted-foreground mb-4">
-        Preview — export will be at full resolution
+        Preview - export will be at full resolution
       </p>
     </div>
   );

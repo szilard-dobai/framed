@@ -13,7 +13,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mockup — Device Mockup Generator",
+  title: "Framed - Device Mockup Generator",
   description: "Create beautiful device mockups in seconds",
   icons: {
     icon: "/favicon.svg",

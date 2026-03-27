@@ -19,18 +19,24 @@ import { MockupPreview } from "@/components/mockup-preview";
 
 export default function Home() {
   // State
-  const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(
+    null
+  );
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const [selectedDevice, setSelectedDevice] = useState<DeviceConfig>(defaultDevice);
-  const [selectedAngle, setSelectedAngle] = useState<AngleVariant>(defaultAngle);
+  const [selectedDevice, setSelectedDevice] =
+    useState<DeviceConfig>(defaultDevice);
+  const [selectedAngle, setSelectedAngle] =
+    useState<AngleVariant>(defaultAngle);
   const [backgroundColor, setBackgroundColor] = useState("#FFFFFF");
   const [backgroundTransparent, setBackgroundTransparent] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("png");
 
   // Frame loader
-  const { frameImage, loading: frameLoading, error: frameError } = useFrameLoader(
-    selectedAngle.frameSrc
-  );
+  const {
+    frameImage,
+    loading: frameLoading,
+    error: frameError,
+  } = useFrameLoader(selectedAngle.frameSrc);
 
   // Canvas ref for export
   const exportCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -50,7 +56,8 @@ export default function Home() {
       let bestDevice = devices[0];
       let bestDiff = Infinity;
       for (const device of devices) {
-        const front = device.angles.find((a) => a.id === "front") ?? device.angles[0];
+        const front =
+          device.angles.find((a) => a.id === "front") ?? device.angles[0];
         const region = front.screenRegion;
         const regionW = Math.abs(region.topRight.x - region.topLeft.x);
         const regionH = Math.abs(region.bottomLeft.y - region.topLeft.y);
@@ -84,7 +91,7 @@ export default function Home() {
     let canvas = exportCanvasRef.current;
     if (!canvas) return;
 
-    // JPEG doesn't support transparency — re-render with solid background
+    // JPEG doesn't support transparency - re-render with solid background
     if (exportFormat === "jpeg" && backgroundTransparent) {
       canvas = renderMockup({
         screenshot: uploadedImage,
@@ -96,7 +103,14 @@ export default function Home() {
     }
 
     await exportCanvas(canvas, exportFormat, "mockup");
-  }, [exportFormat, backgroundTransparent, uploadedImage, frameImage, selectedAngle, backgroundColor]);
+  }, [
+    exportFormat,
+    backgroundTransparent,
+    uploadedImage,
+    frameImage,
+    selectedAngle,
+    backgroundColor,
+  ]);
 
   const canExport = !!uploadedImage && !!frameImage;
 
@@ -105,7 +119,6 @@ export default function Home() {
       <Header onExport={handleExport} canExport={canExport} />
 
       <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
-        {/* Left panel — controls */}
         <aside className="w-full lg:w-80 border-r p-4 space-y-6 lg:overflow-y-auto shrink-0 order-2 lg:order-1">
           <UploadZone
             uploadedImage={uploadedImage}
@@ -137,7 +150,6 @@ export default function Home() {
           />
         </aside>
 
-        {/* Right panel — preview */}
         <main className="flex-1 flex order-1 lg:order-2 min-h-[300px] lg:min-h-0">
           <MockupPreview
             screenshot={uploadedImage}
@@ -152,7 +164,6 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Mobile sticky download bar */}
       <div className="lg:hidden sticky bottom-0 border-t p-3 bg-background">
         <Button
           onClick={handleExport}
