@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { ExportFormat } from "@/lib/types";
 
 interface ExportPanelProps {
@@ -11,6 +11,7 @@ interface ExportPanelProps {
   onFormatChange: (format: ExportFormat) => void;
   onExport: () => void;
   canExport: boolean;
+  exporting: boolean;
 }
 
 const FORMAT_OPTIONS: { value: ExportFormat; label: string }[] = [
@@ -23,6 +24,7 @@ export function ExportPanel({
   onFormatChange,
   onExport,
   canExport,
+  exporting,
 }: ExportPanelProps) {
   return (
     <div className="space-y-3">
@@ -44,9 +46,13 @@ export function ExportPanel({
         ))}
       </RadioGroup>
       <div className="hidden lg:block space-y-3">
-        <Button onClick={onExport} disabled={!canExport} className="w-full" size="lg">
-          <Download className="w-4 h-4 mr-2" />
-          Download {format.toUpperCase()}
+        <Button onClick={onExport} disabled={!canExport || exporting} className="w-full" size="lg">
+          {exporting ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2" />
+          )}
+          {exporting ? "Exporting..." : `Download ${format.toUpperCase()}`}
         </Button>
         {canExport && (
           <p className="text-xs text-muted-foreground text-center">

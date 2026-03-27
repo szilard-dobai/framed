@@ -8,7 +8,7 @@ import { exportCanvas } from "@/lib/export";
 import { renderMockup } from "@/lib/composite";
 import { useFrameLoader } from "@/lib/use-frame-loader";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { Header } from "@/components/header";
 import { UploadZone } from "@/components/upload-zone";
 import { DevicePicker } from "@/components/device-picker";
@@ -30,6 +30,7 @@ export default function Home() {
   const [backgroundColor, setBackgroundColor] = useState("#FFFFFF");
   const [backgroundTransparent, setBackgroundTransparent] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("png");
+  const [exporting, setExporting] = useState(false);
 
   // Frame loader
   const {
@@ -64,23 +65,28 @@ export default function Home() {
   }, []);
 
   const handleExport = useCallback(async () => {
-    if (!uploadedImage || !frameImage) return;
+    if (!uploadedImage || !frameImage || exporting) return;
 
-    let canvas = exportCanvasRef.current;
-    if (!canvas) return;
+    setExporting(true);
+    try {
+      let canvas = exportCanvasRef.current;
+      if (!canvas) return;
 
-    // JPEG doesn't support transparency - re-render with solid background
-    if (exportFormat === "jpeg" && backgroundTransparent) {
-      canvas = renderMockup({
-        screenshot: uploadedImage,
-        frameImage,
-        angle: selectedAngle,
-        backgroundColor,
-        transparent: false,
-      });
+      // JPEG doesn't support transparency - re-render with solid background
+      if (exportFormat === "jpeg" && backgroundTransparent) {
+        canvas = renderMockup({
+          screenshot: uploadedImage,
+          frameImage,
+          angle: selectedAngle,
+          backgroundColor,
+          transparent: false,
+        });
+      }
+
+      await exportCanvas(canvas, exportFormat, "mockup");
+    } finally {
+      setExporting(false);
     }
-
-    await exportCanvas(canvas, exportFormat, "mockup");
   }, [
     exportFormat,
     backgroundTransparent,
@@ -88,13 +94,14 @@ export default function Home() {
     frameImage,
     selectedAngle,
     backgroundColor,
+    exporting,
   ]);
 
   const canExport = !!uploadedImage && !!frameImage;
 
   return (
     <div className="lg:h-screen flex flex-col max-w-[1920px] mx-auto w-full border-x border-border bg-background">
-      <Header onExport={handleExport} canExport={canExport} />
+      <Header onExport={handleExport} canExport={canExport} exporting={exporting} />
 
       <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
         <aside className="w-full lg:w-80 border-r p-4 space-y-6 lg:overflow-y-auto shrink-0 order-2 lg:order-1 bg-background">
@@ -125,6 +132,7 @@ export default function Home() {
             onFormatChange={setExportFormat}
             onExport={handleExport}
             canExport={canExport}
+            exporting={exporting}
           />
         </aside>
 
@@ -145,12 +153,16 @@ export default function Home() {
       <div className="lg:hidden sticky bottom-0 border-t p-3 bg-background">
         <Button
           onClick={handleExport}
-          disabled={!canExport}
+          disabled={!canExport || exporting}
           className="w-full"
           size="lg"
         >
-          <Download className="w-4 h-4 mr-2" />
-          Download {exportFormat.toUpperCase()}
+          {exporting ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2" />
+          )}
+          {exporting ? "Exporting..." : `Download ${exportFormat.toUpperCase()}`}
         </Button>
       </div>
     </div>
