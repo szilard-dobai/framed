@@ -1,16 +1,11 @@
 import { DeviceConfig } from "./types";
 
-// Screen region coordinates measured from actual frame PNGs (transparent area scan)
-// with a small inset (~4px) to avoid clipping at rounded corners.
-
-const INSET = 4;
-
 function rect(l: number, t: number, r: number, b: number) {
   return {
-    topLeft: { x: l + INSET, y: t + INSET },
-    topRight: { x: r - INSET, y: t + INSET },
-    bottomLeft: { x: l + INSET, y: b - INSET },
-    bottomRight: { x: r - INSET, y: b - INSET },
+    topLeft: { x: l, y: t },
+    topRight: { x: r, y: t },
+    bottomLeft: { x: l, y: b },
+    bottomRight: { x: r, y: b },
   };
 }
 
@@ -27,7 +22,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/iphone-15-pro-portrait.png",
         // Measured: 120,120 → 1298,2675
         screenRegion: rect(120, 120, 1298, 2675),
-        screenCornerRadius: 35,
+        screenCornerRadius: 55,
       },
       {
         id: "landscape",
@@ -36,7 +31,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/iphone-15-pro-landscape.png",
         // Measured: 120,120 → 2675,1298 (extends behind Dynamic Island)
         screenRegion: rect(120, 120, 2675, 1298),
-        screenCornerRadius: 40,
+        screenCornerRadius: 55,
       },
       {
         id: "left",
