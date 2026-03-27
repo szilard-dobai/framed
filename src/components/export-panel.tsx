@@ -44,15 +44,17 @@ export function ExportPanel({
           </div>
         ))}
       </RadioGroup>
-      <Button onClick={onExport} disabled={!canExport} className="w-full" size="lg">
-        <Download className="w-4 h-4 mr-2" />
-        Download {format.toUpperCase()}
-      </Button>
-      {canExport && (
-        <p className="text-xs text-muted-foreground text-center">
-          High-resolution export available
-        </p>
-      )}
+      <div className="hidden lg:block space-y-3">
+        <Button onClick={onExport} disabled={!canExport} className="w-full" size="lg">
+          <Download className="w-4 h-4 mr-2" />
+          Download {format.toUpperCase()}
+        </Button>
+        {canExport && (
+          <p className="text-xs text-muted-foreground text-center">
+            High-resolution export available
+          </p>
+        )}
+      </div>
     </div>
   );
 }
