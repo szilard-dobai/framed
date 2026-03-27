@@ -27,7 +27,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/iphone-15-pro-portrait.png",
         // Measured: 120,120 → 1298,2675
         screenRegion: rect(120, 120, 1298, 2675),
-        screenCornerRadius: 30,
+        screenCornerRadius: 35,
       },
       {
         id: "landscape",
@@ -36,7 +36,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/iphone-15-pro-landscape.png",
         // Measured: 120,120 → 2675,1298 (extends behind Dynamic Island)
         screenRegion: rect(120, 120, 2675, 1298),
-        screenCornerRadius: 33,
+        screenCornerRadius: 40,
       },
       {
         id: "left",
@@ -50,7 +50,7 @@ export const devices: DeviceConfig[] = [
           bottomLeft: { x: 144, y: 2607 },
           bottomRight: { x: 1210, y: 2927 },
         },
-        screenCornerRadius: 25,
+        screenCornerRadius: 50,
       },
     ],
   },
