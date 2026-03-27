@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Framed — Device Mockup Generator",
   description:
-    "Create beautiful device mockups in seconds. Upload a screenshot, pick a device frame, and download a high-res PNG — free, instant, no signup.",
+    "Create beautiful device mockups in seconds. Upload a screenshot, pick a device frame, and download a high-res image — free, instant, no signup.",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
