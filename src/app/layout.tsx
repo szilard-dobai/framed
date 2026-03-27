@@ -45,7 +45,7 @@ export const metadata: Metadata = {
       "Upload a screenshot, pick a device frame, and download a high-res mockup. Free, instant, no signup.",
     images: ["/og-image.png"],
   },
-  metadataBase: new URL("https://framed.vercel.app"),
+  metadataBase: new URL("https://framed-gray.vercel.app"),
   keywords: [
     "device mockup",
     "mockup generator",
