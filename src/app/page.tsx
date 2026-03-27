@@ -153,7 +153,7 @@ export default function Home() {
       </div>
 
       {/* Mobile sticky download bar */}
-      <div className="lg:hidden border-t p-3">
+      <div className="lg:hidden sticky bottom-0 border-t p-3 bg-background">
         <Button
           onClick={handleExport}
           disabled={!canExport}
