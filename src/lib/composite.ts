@@ -108,11 +108,13 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     bottomRight: { x: angle.screenRegion.bottomRight.x + offsetX, y: angle.screenRegion.bottomRight.y + offsetY },
   };
 
-  // 3. Draw the screenshot via perspective transform
-  drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion);
+  // 3. Draw the screenshot via perspective transform (more subdivisions for perspective angles)
+  const subdivisions = angle.screenCornerRadius === 0 ? 24 : 12;
+  drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion, subdivisions);
 
-  // 4. Clip the screenshot to a rounded rect matching the screen area
+  // 4. Clip the screenshot to the screen area
   if (angle.screenCornerRadius > 0) {
+    // For front-facing views: clip to a rounded rect
     const rx = Math.min(offsetRegion.topLeft.x, offsetRegion.bottomLeft.x);
     const ry = Math.min(offsetRegion.topLeft.y, offsetRegion.topRight.y);
     const rw = Math.max(offsetRegion.topRight.x, offsetRegion.bottomRight.x) - rx;
@@ -130,6 +132,30 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalCompositeOperation = "destination-in";
     ctx.drawImage(clipCanvas, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+  } else {
+    // For perspective views: use the frame's own transparency as a mask.
+    // The frame is opaque where the bezel is and transparent where the screen is.
+    // We want to keep screenshot pixels only where the frame is transparent.
+    const maskCanvas = document.createElement("canvas");
+    maskCanvas.width = canvasWidth;
+    maskCanvas.height = canvasHeight;
+    const maskCtx = maskCanvas.getContext("2d")!;
+
+    // Draw the frame
+    maskCtx.drawImage(frameImage, offsetX, offsetY);
+
+    // Invert: make screen area (transparent in frame) opaque, and bezel opaque → transparent
+    const maskData = maskCtx.getImageData(0, 0, canvasWidth, canvasHeight);
+    const mp = maskData.data;
+    for (let i = 0; i < mp.length; i += 4) {
+      mp[i + 3] = mp[i + 3] > 0 ? 0 : 255;
+    }
+    maskCtx.putImageData(maskData, 0, 0);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = "destination-in";
+    ctx.drawImage(maskCanvas, 0, 0);
     ctx.globalCompositeOperation = "source-over";
   }
 

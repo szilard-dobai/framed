@@ -83,16 +83,18 @@ export function drawPerspective(
         tl.y
       );
 
+      // Overlap by 1px to prevent seam artifacts between tiles
+      const overlap = 1;
       ctx.drawImage(
         image,
         srcX,
         srcY,
-        cellW + 0.5,
-        cellH + 0.5,
+        cellW + overlap,
+        cellH + overlap,
         0,
         0,
-        cellW + 0.5,
-        cellH + 0.5
+        cellW + overlap,
+        cellH + overlap
       );
 
       ctx.restore();
