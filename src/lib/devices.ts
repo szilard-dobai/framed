@@ -44,11 +44,11 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/iphone-15-pro-left.png",
         thumbnail: "/frames/iphone-15-pro-left.png",
         screenRegion: {
-          // MockUPhone coords with inset to avoid corner bleed
-          topLeft: { x: 590, y: 200 },
-          topRight: { x: 1665, y: 260 },
-          bottomLeft: { x: 165, y: 2580 },
-          bottomRight: { x: 1195, y: 2900 },
+          // MockUPhone coords with small inset to avoid corner bleed
+          topLeft: { x: 580, y: 187 },
+          topRight: { x: 1675, y: 248 },
+          bottomLeft: { x: 153, y: 2595 },
+          bottomRight: { x: 1202, y: 2915 },
         },
         screenCornerRadius: 0,
       },
@@ -99,11 +99,11 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/ipad-pro-right.png",
         thumbnail: "/frames/ipad-pro-right.png",
         screenRegion: {
-          // MockUPhone coords with inset to avoid corner bleed
-          topLeft: { x: 190, y: 235 },
-          topRight: { x: 1445, y: 275 },
-          bottomLeft: { x: 683, y: 2025 },
-          bottomRight: { x: 1995, y: 1965 },
+          // MockUPhone coords
+          topLeft: { x: 172, y: 216 },
+          topRight: { x: 1462, y: 259 },
+          bottomLeft: { x: 666, y: 2046 },
+          bottomRight: { x: 2012, y: 1981 },
         },
         screenCornerRadius: 0,
       },
