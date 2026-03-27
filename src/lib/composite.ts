@@ -1,5 +1,5 @@
-import { AngleVariant, ScreenRegion } from "./types";
 import { drawPerspective } from "./perspective";
+import { AngleVariant, ScreenRegion } from "./types";
 
 const PADDING_RATIO = 0.1;
 
@@ -54,8 +54,18 @@ function screenRegionBounds(region: ScreenRegion): {
   width: number;
   height: number;
 } {
-  const xs = [region.topLeft.x, region.topRight.x, region.bottomLeft.x, region.bottomRight.x];
-  const ys = [region.topLeft.y, region.topRight.y, region.bottomLeft.y, region.bottomRight.y];
+  const xs = [
+    region.topLeft.x,
+    region.topRight.x,
+    region.bottomLeft.x,
+    region.bottomRight.x,
+  ];
+  const ys = [
+    region.topLeft.y,
+    region.topRight.y,
+    region.bottomLeft.y,
+    region.bottomRight.y,
+  ];
   return {
     width: Math.max(...xs) - Math.min(...xs),
     height: Math.max(...ys) - Math.min(...ys),
@@ -71,11 +81,13 @@ export interface RenderOptions {
 }
 
 export function renderMockup(options: RenderOptions): HTMLCanvasElement {
-  const { screenshot, frameImage, angle, backgroundColor, transparent } = options;
+  const { screenshot, frameImage, angle, backgroundColor, transparent } =
+    options;
 
   const frameW = frameImage.naturalWidth;
   const frameH = frameImage.naturalHeight;
-  const { canvasWidth, canvasHeight, offsetX, offsetY } = computeCanvasDimensions(frameW, frameH);
+  const { canvasWidth, canvasHeight, offsetX, offsetY } =
+    computeCanvasDimensions(frameW, frameH);
 
   const canvas = document.createElement("canvas");
   canvas.width = canvasWidth;
@@ -99,17 +111,46 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
   // Fill with white so the letterbox area isn't transparent (would show background through frame)
   fitCtx.fillStyle = "#FFFFFF";
   fitCtx.fillRect(0, 0, bounds.width, bounds.height);
-  fitCtx.drawImage(screenshot, 0, 0, screenshot.naturalWidth, screenshot.naturalHeight, fit.dx, fit.dy, fit.dw, fit.dh);
+  fitCtx.drawImage(
+    screenshot,
+    0,
+    0,
+    screenshot.naturalWidth,
+    screenshot.naturalHeight,
+    fit.dx,
+    fit.dy,
+    fit.dw,
+    fit.dh
+  );
 
   const offsetRegion: ScreenRegion = {
-    topLeft: { x: angle.screenRegion.topLeft.x + offsetX, y: angle.screenRegion.topLeft.y + offsetY },
-    topRight: { x: angle.screenRegion.topRight.x + offsetX, y: angle.screenRegion.topRight.y + offsetY },
-    bottomLeft: { x: angle.screenRegion.bottomLeft.x + offsetX, y: angle.screenRegion.bottomLeft.y + offsetY },
-    bottomRight: { x: angle.screenRegion.bottomRight.x + offsetX, y: angle.screenRegion.bottomRight.y + offsetY },
+    topLeft: {
+      x: angle.screenRegion.topLeft.x + offsetX,
+      y: angle.screenRegion.topLeft.y + offsetY,
+    },
+    topRight: {
+      x: angle.screenRegion.topRight.x + offsetX,
+      y: angle.screenRegion.topRight.y + offsetY,
+    },
+    bottomLeft: {
+      x: angle.screenRegion.bottomLeft.x + offsetX,
+      y: angle.screenRegion.bottomLeft.y + offsetY,
+    },
+    bottomRight: {
+      x: angle.screenRegion.bottomRight.x + offsetX,
+      y: angle.screenRegion.bottomRight.y + offsetY,
+    },
   };
 
   // 3. Draw the screenshot via perspective transform
-  drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion, 24);
+  drawPerspective(
+    ctx,
+    fitCanvas,
+    bounds.width,
+    bounds.height,
+    offsetRegion,
+    24
+  );
 
   // 4. Clip the screenshot to the screen area with rounded corners
   if (angle.screenCornerRadius > 0) {
@@ -129,14 +170,20 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     clipCtx.beginPath();
 
     // Helper: point along edge from p1 to p2, at distance t (0-1)
-    const lerp = (p1: { x: number; y: number }, p2: { x: number; y: number }, t: number) => ({
+    const lerp = (
+      p1: { x: number; y: number },
+      p2: { x: number; y: number },
+      t: number
+    ) => ({
       x: p1.x + (p2.x - p1.x) * t,
       y: p1.y + (p2.y - p1.y) * t,
     });
 
     // Edge lengths for normalizing the radius
-    const edgeLen = (p1: { x: number; y: number }, p2: { x: number; y: number }) =>
-      Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+    const edgeLen = (
+      p1: { x: number; y: number },
+      p2: { x: number; y: number }
+    ) => Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
 
     const topLen = edgeLen(tl, tr);
     const rightLen = edgeLen(tr, br);
