@@ -82,13 +82,7 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
   canvas.height = canvasHeight;
   const ctx = canvas.getContext("2d")!;
 
-  // 1. Background
-  if (!transparent) {
-    ctx.fillStyle = backgroundColor;
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  }
-
-  // 2. Screenshot — scaled to contain (fit entirely, centered) into screen region
+  // 1. Screenshot (background is drawn later via destination-over after clipping) — scaled to contain (fit entirely, centered) into screen region
   const bounds = screenRegionBounds(angle.screenRegion);
   const fit = computeContainFit(
     screenshot.naturalWidth,
@@ -116,8 +110,38 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
 
   drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion);
 
-  // 3. Device frame on top
+  // 3. Clip screenshot to the frame's transparent area using destination-in compositing.
+  // This ensures the screenshot doesn't bleed past rounded screen corners.
+  // First, create a mask from the frame: transparent where screen is, opaque elsewhere.
+  // Then use 'destination-in' with the inverted mask to keep only pixels inside the screen.
+  const maskCanvas = document.createElement("canvas");
+  maskCanvas.width = canvasWidth;
+  maskCanvas.height = canvasHeight;
+  const maskCtx = maskCanvas.getContext("2d")!;
+
+  // Fill the entire mask as opaque white
+  maskCtx.fillStyle = "#FFFFFF";
+  maskCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  // Punch out the frame's opaque pixels (bezel), leaving only the screen area opaque
+  maskCtx.globalCompositeOperation = "destination-out";
+  maskCtx.drawImage(frameImage, offsetX, offsetY);
+
+  // Now maskCanvas is opaque where the screen is, transparent where the bezel is.
+  // Use it to clip the main canvas: keep only pixels that overlap with the mask.
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = "destination-in";
+  ctx.drawImage(maskCanvas, 0, 0);
+
+  // 4. Reset compositing and draw background behind everything
+  ctx.globalCompositeOperation = "destination-over";
+  if (!transparent) {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
+
+  // 5. Draw device frame on top
+  ctx.globalCompositeOperation = "source-over";
   ctx.drawImage(frameImage, offsetX, offsetY);
 
   return canvas;
