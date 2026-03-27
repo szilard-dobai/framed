@@ -26,7 +26,7 @@ export interface DeviceConfig {
   angles: AngleVariant[];
 }
 
-export type ExportFormat = "png" | "jpeg" | "svg";
+export type ExportFormat = "png" | "jpeg";
 
 export interface ExportOptions {
   format: ExportFormat;

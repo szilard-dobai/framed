@@ -16,7 +16,6 @@ interface ExportPanelProps {
 const FORMAT_OPTIONS: { value: ExportFormat; label: string }[] = [
   { value: "png", label: "PNG" },
   { value: "jpeg", label: "JPEG" },
-  { value: "svg", label: "SVG (raster)" },
 ];
 
 export function ExportPanel({
