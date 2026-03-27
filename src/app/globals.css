@@ -122,7 +122,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: oklch(0.97 0.01 264.376);
   }
   html {
     @apply font-sans;

@@ -93,7 +93,7 @@ export default function Home() {
   const canExport = !!uploadedImage && !!frameImage;
 
   return (
-    <div className="lg:h-screen flex flex-col max-w-[1920px] mx-auto w-full border-x border-border">
+    <div className="lg:h-screen flex flex-col max-w-[1920px] mx-auto w-full border-x border-border bg-background">
       <Header onExport={handleExport} canExport={canExport} />
 
       <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
