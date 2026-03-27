@@ -27,6 +27,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/iphone-15-pro-portrait.png",
         // Measured: 120,120 → 1298,2675
         screenRegion: rect(120, 120, 1298, 2675),
+        screenCornerRadius: 25,
       },
       {
         id: "landscape",
@@ -35,6 +36,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/iphone-15-pro-landscape.png",
         // Measured: 120,120 → 2675,1298 (extends behind Dynamic Island)
         screenRegion: rect(120, 120, 2675, 1298),
+        screenCornerRadius: 25,
       },
       {
         id: "left",
@@ -42,12 +44,12 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/iphone-15-pro-left.png",
         thumbnail: "/frames/iphone-15-pro-left.png",
         screenRegion: {
-          // MockUPhone coords (perspective — can't auto-measure)
           topLeft: { x: 571, y: 177 },
           topRight: { x: 1684, y: 239 },
           bottomLeft: { x: 144, y: 2607 },
           bottomRight: { x: 1210, y: 2927 },
         },
+        screenCornerRadius: 0, // perspective views skip rounded clipping
       },
     ],
   },
@@ -63,6 +65,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/macbook-pro-14-front.png",
         // Measured: 461,301 → 3482,2262
         screenRegion: rect(461, 301, 3482, 2262),
+        screenCornerRadius: 8,
       },
     ],
   },
@@ -78,6 +81,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/ipad-pro-portrait.png",
         // Measured: 111,111 → 1778,2498
         screenRegion: rect(111, 111, 1778, 2498),
+        screenCornerRadius: 20,
       },
       {
         id: "landscape",
@@ -86,6 +90,7 @@ export const devices: DeviceConfig[] = [
         thumbnail: "/frames/ipad-pro-landscape.png",
         // Measured: 111,111 → 2498,1778
         screenRegion: rect(111, 111, 2498, 1778),
+        screenCornerRadius: 20,
       },
       {
         id: "right",
@@ -93,12 +98,12 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/ipad-pro-right.png",
         thumbnail: "/frames/ipad-pro-right.png",
         screenRegion: {
-          // MockUPhone coords (perspective — can't auto-measure)
           topLeft: { x: 172, y: 216 },
           topRight: { x: 1462, y: 259 },
           bottomLeft: { x: 666, y: 2046 },
           bottomRight: { x: 2012, y: 1981 },
         },
+        screenCornerRadius: 0,
       },
     ],
   },

@@ -108,65 +108,42 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     bottomRight: { x: angle.screenRegion.bottomRight.x + offsetX, y: angle.screenRegion.bottomRight.y + offsetY },
   };
 
+  // 3. Draw the screenshot via perspective transform
   drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion);
 
-  // 3. Draw the frame on top of the screenshot
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.globalCompositeOperation = "source-over";
-  ctx.drawImage(frameImage, offsetX, offsetY);
+  // 4. Clip the screenshot to a rounded rect matching the screen area
+  if (angle.screenCornerRadius > 0) {
+    const rx = Math.min(offsetRegion.topLeft.x, offsetRegion.bottomLeft.x);
+    const ry = Math.min(offsetRegion.topLeft.y, offsetRegion.topRight.y);
+    const rw = Math.max(offsetRegion.topRight.x, offsetRegion.bottomRight.x) - rx;
+    const rh = Math.max(offsetRegion.bottomLeft.y, offsetRegion.bottomRight.y) - ry;
 
-  // 4. Clean up: remove any screenshot pixels bleeding through semi-transparent
-  // bezel edges and the transparent area outside the phone body.
-  // Strategy: for each pixel, if the frame has ANY alpha (even partial),
-  // replace it with just the frame pixel. If the frame is fully transparent
-  // AND it's within the screen region bounding box, keep the screenshot.
-  // Otherwise (transparent area outside the phone), clear it.
-  const imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-  const px = imgData.data;
+    const clipCanvas = document.createElement("canvas");
+    clipCanvas.width = canvasWidth;
+    clipCanvas.height = canvasHeight;
+    const clipCtx = clipCanvas.getContext("2d")!;
+    clipCtx.beginPath();
+    clipCtx.roundRect(rx, ry, rw, rh, angle.screenCornerRadius);
+    clipCtx.fillStyle = "#000";
+    clipCtx.fill();
 
-  // Draw frame onto a temp canvas to read its alpha
-  const frameCanvas = document.createElement("canvas");
-  frameCanvas.width = canvasWidth;
-  frameCanvas.height = canvasHeight;
-  const frameCtx = frameCanvas.getContext("2d")!;
-  frameCtx.drawImage(frameImage, offsetX, offsetY);
-  const framePx = frameCtx.getImageData(0, 0, canvasWidth, canvasHeight).data;
-
-  // Screen bounding box (with offset) to distinguish screen area from outer area
-  const screenMinX = Math.min(offsetRegion.topLeft.x, offsetRegion.bottomLeft.x);
-  const screenMaxX = Math.max(offsetRegion.topRight.x, offsetRegion.bottomRight.x);
-  const screenMinY = Math.min(offsetRegion.topLeft.y, offsetRegion.topRight.y);
-  const screenMaxY = Math.max(offsetRegion.bottomLeft.y, offsetRegion.bottomRight.y);
-
-  for (let y = 0; y < canvasHeight; y++) {
-    for (let x = 0; x < canvasWidth; x++) {
-      const i = (y * canvasWidth + x) * 4;
-      const frameAlpha = framePx[i + 3];
-
-      if (frameAlpha === 0) {
-        // Frame is fully transparent here.
-        // If outside the screen bounding box, this is the outer area — clear it.
-        if (x < screenMinX || x > screenMaxX || y < screenMinY || y > screenMaxY) {
-          px[i] = 0;
-          px[i + 1] = 0;
-          px[i + 2] = 0;
-          px[i + 3] = 0;
-        }
-        // Otherwise it's the screen area — keep the screenshot pixel
-      }
-      // If frame has any alpha, the composited result already has the frame on top,
-      // which is correct — the bezel covers the screenshot.
-    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = "destination-in";
+    ctx.drawImage(clipCanvas, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
   }
-  ctx.putImageData(imgData, 0, 0);
 
-  // 5. Draw background behind everything
+  // 5. Draw background behind the clipped screenshot
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalCompositeOperation = "destination-over";
   if (!transparent) {
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   }
+
+  // 6. Draw device frame on top
   ctx.globalCompositeOperation = "source-over";
+  ctx.drawImage(frameImage, offsetX, offsetY);
 
   return canvas;
 }

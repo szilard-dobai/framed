@@ -15,6 +15,7 @@ export interface AngleVariant {
   name: string;
   frameSrc: string;
   screenRegion: ScreenRegion;
+  screenCornerRadius: number;
   thumbnail: string;
 }
 
