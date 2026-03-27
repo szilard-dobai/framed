@@ -131,7 +131,8 @@
   button:not(:disabled),
   [role="radio"],
   label[for],
-  .react-colorful {
+  .react-colorful,
+  .react-colorful * {
     cursor: pointer;
   }
 }
