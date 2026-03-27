@@ -25,8 +25,8 @@ export const devices: DeviceConfig[] = [
         name: "Portrait",
         frameSrc: "/frames/iphone-15-pro-portrait.png",
         thumbnail: "/frames/iphone-15-pro-portrait.png",
-        // Measured: 120,264 → 1298,2675
-        screenRegion: rect(120, 264, 1298, 2675),
+        // Measured: 120,120 → 1298,2675
+        screenRegion: rect(120, 120, 1298, 2675),
       },
       {
         id: "landscape",
@@ -61,8 +61,8 @@ export const devices: DeviceConfig[] = [
         name: "Front",
         frameSrc: "/frames/macbook-pro-14-front.png",
         thumbnail: "/frames/macbook-pro-14-front.png",
-        // Measured: 461,365 → 3482,2262
-        screenRegion: rect(461, 365, 3482, 2262),
+        // Measured: 461,301 → 3482,2262
+        screenRegion: rect(461, 301, 3482, 2262),
       },
     ],
   },
