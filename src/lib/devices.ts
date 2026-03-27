@@ -44,11 +44,10 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/iphone-15-pro-left.png",
         thumbnail: "/frames/iphone-15-pro-left.png",
         screenRegion: {
-          // MockUPhone coords with small inset to avoid corner bleed
-          topLeft: { x: 580, y: 187 },
-          topRight: { x: 1675, y: 248 },
-          bottomLeft: { x: 153, y: 2595 },
-          bottomRight: { x: 1202, y: 2915 },
+          topLeft: { x: 575, y: 181 },
+          topRight: { x: 1680, y: 243 },
+          bottomLeft: { x: 148, y: 2603 },
+          bottomRight: { x: 1206, y: 2923 },
         },
         screenCornerRadius: 0,
       },
