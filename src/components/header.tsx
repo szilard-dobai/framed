@@ -2,17 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import Image from "next/image";
 
 interface HeaderProps {
-  onExport: () => void;
   canExport: boolean;
+  onExport: () => void;
 }
 
-export function Header({ onExport, canExport }: HeaderProps) {
+export function Header({ canExport, onExport }: HeaderProps) {
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b">
       <div className="flex items-center gap-3">
-        <img src="/favicon.svg" alt="" className="w-7 h-7" />
+        <Image src="/favicon.svg" alt="" width={28} height={28} />
         <h1 className="text-xl font-bold">Mockup</h1>
       </div>
       <Button onClick={onExport} disabled={!canExport} size="sm">
