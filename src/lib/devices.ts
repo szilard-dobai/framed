@@ -33,8 +33,8 @@ export const devices: DeviceConfig[] = [
         name: "Landscape",
         frameSrc: "/frames/iphone-15-pro-landscape.png",
         thumbnail: "/frames/iphone-15-pro-landscape.png",
-        // Measured: 120,120 → 2531,1298
-        screenRegion: rect(120, 120, 2531, 1298),
+        // Measured: 120,120 → 2675,1298 (extends behind Dynamic Island)
+        screenRegion: rect(120, 120, 2675, 1298),
       },
       {
         id: "left",
