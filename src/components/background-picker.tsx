@@ -120,21 +120,21 @@ export function BackgroundPicker({
             onChange={handlePickerChange}
             style={{ width: "100%" }}
           />
+          <div className="flex items-center gap-2">
+            <Label htmlFor="hex-input" className="text-xs shrink-0">
+              #
+            </Label>
+            <Input
+              id="hex-input"
+              value={hexInput.replace("#", "")}
+              onChange={(e) => handleHexChange(e.target.value)}
+              className="h-8 text-xs font-mono"
+              maxLength={6}
+              placeholder="FFFFFF"
+            />
+          </div>
         </div>
       )}
-      <div className="flex items-center gap-2">
-        <Label htmlFor="hex-input" className="text-xs shrink-0">
-          #
-        </Label>
-        <Input
-          id="hex-input"
-          value={hexInput.replace("#", "")}
-          onChange={(e) => handleHexChange(e.target.value)}
-          className="h-8 text-xs font-mono"
-          maxLength={6}
-          placeholder="FFFFFF"
-        />
-      </div>
     </div>
   );
 }
