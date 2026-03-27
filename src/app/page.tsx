@@ -45,32 +45,10 @@ export default function Home() {
     exportCanvasRef.current = canvas;
   }, []);
 
-  // Auto-select device by aspect ratio
   const handleImageUpload = useCallback(
     (image: HTMLImageElement, fileName: string) => {
       setUploadedImage(image);
       setUploadedFileName(fileName);
-
-      const imgAspect = image.naturalWidth / image.naturalHeight;
-
-      let bestDevice = devices[0];
-      let bestDiff = Infinity;
-      for (const device of devices) {
-        const front =
-          device.angles.find((a) => a.id === "front") ?? device.angles[0];
-        const region = front.screenRegion;
-        const regionW = Math.abs(region.topRight.x - region.topLeft.x);
-        const regionH = Math.abs(region.bottomLeft.y - region.topLeft.y);
-        const deviceAspect = regionW / regionH;
-        const diff = Math.abs(imgAspect - deviceAspect);
-        if (diff < bestDiff) {
-          bestDiff = diff;
-          bestDevice = device;
-        }
-      }
-
-      setSelectedDevice(bestDevice);
-      setSelectedAngle(bestDevice.angles[0]);
     },
     []
   );
