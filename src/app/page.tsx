@@ -101,12 +101,12 @@ export default function Home() {
   const canExport = !!uploadedImage && !!frameImage;
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="lg:h-screen flex flex-col">
       <Header onExport={handleExport} canExport={canExport} />
 
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
         {/* Left panel — controls */}
-        <aside className="w-full lg:w-80 border-r p-4 space-y-6 overflow-y-auto shrink-0 order-2 lg:order-1">
+        <aside className="w-full lg:w-80 border-r p-4 space-y-6 lg:overflow-y-auto shrink-0 order-2 lg:order-1">
           <UploadZone
             uploadedImage={uploadedImage}
             uploadedFileName={uploadedFileName}
