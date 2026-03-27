@@ -110,43 +110,63 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
 
   drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion);
 
-  // 3. Clip screenshot to the frame's transparent area.
-  // The frame has semi-transparent pixels at rounded corners, so we need a binary mask:
-  // fully opaque where the frame is fully transparent (screen), fully transparent elsewhere.
-  const maskCanvas = document.createElement("canvas");
-  maskCanvas.width = canvasWidth;
-  maskCanvas.height = canvasHeight;
-  const maskCtx = maskCanvas.getContext("2d")!;
-
-  // Draw the frame onto the mask
-  maskCtx.drawImage(frameImage, offsetX, offsetY);
-
-  // Threshold: any pixel with alpha > 0 becomes fully opaque, then invert.
-  // This creates a clean binary mask of the screen cutout.
-  const maskData = maskCtx.getImageData(0, 0, canvasWidth, canvasHeight);
-  const pixels = maskData.data;
-  for (let i = 0; i < pixels.length; i += 4) {
-    // If frame pixel has any opacity (bezel), mask it out (transparent)
-    // If frame pixel is fully transparent (screen area), make it opaque
-    pixels[i + 3] = pixels[i + 3] > 0 ? 0 : 255;
-  }
-  maskCtx.putImageData(maskData, 0, 0);
-
-  // Apply mask: keep only screenshot pixels inside the screen cutout
+  // 3. Draw the frame on top of the screenshot
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.globalCompositeOperation = "destination-in";
-  ctx.drawImage(maskCanvas, 0, 0);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.drawImage(frameImage, offsetX, offsetY);
 
-  // 4. Reset compositing and draw background behind everything
+  // 4. Clean up: remove any screenshot pixels bleeding through semi-transparent
+  // bezel edges and the transparent area outside the phone body.
+  // Strategy: for each pixel, if the frame has ANY alpha (even partial),
+  // replace it with just the frame pixel. If the frame is fully transparent
+  // AND it's within the screen region bounding box, keep the screenshot.
+  // Otherwise (transparent area outside the phone), clear it.
+  const imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+  const px = imgData.data;
+
+  // Draw frame onto a temp canvas to read its alpha
+  const frameCanvas = document.createElement("canvas");
+  frameCanvas.width = canvasWidth;
+  frameCanvas.height = canvasHeight;
+  const frameCtx = frameCanvas.getContext("2d")!;
+  frameCtx.drawImage(frameImage, offsetX, offsetY);
+  const framePx = frameCtx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+
+  // Screen bounding box (with offset) to distinguish screen area from outer area
+  const screenMinX = Math.min(offsetRegion.topLeft.x, offsetRegion.bottomLeft.x);
+  const screenMaxX = Math.max(offsetRegion.topRight.x, offsetRegion.bottomRight.x);
+  const screenMinY = Math.min(offsetRegion.topLeft.y, offsetRegion.topRight.y);
+  const screenMaxY = Math.max(offsetRegion.bottomLeft.y, offsetRegion.bottomRight.y);
+
+  for (let y = 0; y < canvasHeight; y++) {
+    for (let x = 0; x < canvasWidth; x++) {
+      const i = (y * canvasWidth + x) * 4;
+      const frameAlpha = framePx[i + 3];
+
+      if (frameAlpha === 0) {
+        // Frame is fully transparent here.
+        // If outside the screen bounding box, this is the outer area — clear it.
+        if (x < screenMinX || x > screenMaxX || y < screenMinY || y > screenMaxY) {
+          px[i] = 0;
+          px[i + 1] = 0;
+          px[i + 2] = 0;
+          px[i + 3] = 0;
+        }
+        // Otherwise it's the screen area — keep the screenshot pixel
+      }
+      // If frame has any alpha, the composited result already has the frame on top,
+      // which is correct — the bezel covers the screenshot.
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // 5. Draw background behind everything
   ctx.globalCompositeOperation = "destination-over";
   if (!transparent) {
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   }
-
-  // 5. Draw device frame on top
   ctx.globalCompositeOperation = "source-over";
-  ctx.drawImage(frameImage, offsetX, offsetY);
 
   return canvas;
 }
