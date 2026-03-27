@@ -107,7 +107,7 @@ export function MockupPreview({
       className="flex-1 flex flex-col items-center justify-center gap-3 p-4"
     >
       <canvas ref={canvasRef} className="max-w-full max-h-full" />
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground mb-4">
         Preview — export will be at full resolution
       </p>
     </div>
