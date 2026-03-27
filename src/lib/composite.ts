@@ -110,25 +110,29 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
 
   drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion);
 
-  // 3. Clip screenshot to the frame's transparent area using destination-in compositing.
-  // This ensures the screenshot doesn't bleed past rounded screen corners.
-  // First, create a mask from the frame: transparent where screen is, opaque elsewhere.
-  // Then use 'destination-in' with the inverted mask to keep only pixels inside the screen.
+  // 3. Clip screenshot to the frame's transparent area.
+  // The frame has semi-transparent pixels at rounded corners, so we need a binary mask:
+  // fully opaque where the frame is fully transparent (screen), fully transparent elsewhere.
   const maskCanvas = document.createElement("canvas");
   maskCanvas.width = canvasWidth;
   maskCanvas.height = canvasHeight;
   const maskCtx = maskCanvas.getContext("2d")!;
 
-  // Fill the entire mask as opaque white
-  maskCtx.fillStyle = "#FFFFFF";
-  maskCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-  // Punch out the frame's opaque pixels (bezel), leaving only the screen area opaque
-  maskCtx.globalCompositeOperation = "destination-out";
+  // Draw the frame onto the mask
   maskCtx.drawImage(frameImage, offsetX, offsetY);
 
-  // Now maskCanvas is opaque where the screen is, transparent where the bezel is.
-  // Use it to clip the main canvas: keep only pixels that overlap with the mask.
+  // Threshold: any pixel with alpha > 0 becomes fully opaque, then invert.
+  // This creates a clean binary mask of the screen cutout.
+  const maskData = maskCtx.getImageData(0, 0, canvasWidth, canvasHeight);
+  const pixels = maskData.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    // If frame pixel has any opacity (bezel), mask it out (transparent)
+    // If frame pixel is fully transparent (screen area), make it opaque
+    pixels[i + 3] = pixels[i + 3] > 0 ? 0 : 255;
+  }
+  maskCtx.putImageData(maskData, 0, 0);
+
+  // Apply mask: keep only screenshot pixels inside the screen cutout
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalCompositeOperation = "destination-in";
   ctx.drawImage(maskCanvas, 0, 0);
