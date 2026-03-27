@@ -44,28 +44,13 @@ export const devices: DeviceConfig[] = [
         frameSrc: "/frames/iphone-15-pro-left.png",
         thumbnail: "/frames/iphone-15-pro-left.png",
         screenRegion: {
-          topLeft: { x: 575, y: 181 },
-          topRight: { x: 1680, y: 243 },
-          bottomLeft: { x: 148, y: 2603 },
-          bottomRight: { x: 1206, y: 2923 },
+          // Original MockUPhone coords
+          topLeft: { x: 571, y: 177 },
+          topRight: { x: 1684, y: 239 },
+          bottomLeft: { x: 144, y: 2607 },
+          bottomRight: { x: 1210, y: 2927 },
         },
-        screenCornerRadius: 0,
-      },
-    ],
-  },
-  {
-    id: "macbook-pro-14",
-    name: 'MacBook Pro 14"',
-    icon: "/icons/macbook.svg",
-    angles: [
-      {
-        id: "front",
-        name: "Front",
-        frameSrc: "/frames/macbook-pro-14-front.png",
-        thumbnail: "/frames/macbook-pro-14-front.png",
-        // Measured: 461,301 → 3482,2262
-        screenRegion: rect(461, 301, 3482, 2262),
-        screenCornerRadius: 8,
+        screenCornerRadius: 25,
       },
     ],
   },
@@ -105,6 +90,22 @@ export const devices: DeviceConfig[] = [
           bottomRight: { x: 2012, y: 1981 },
         },
         screenCornerRadius: 0,
+      },
+    ],
+  },
+  {
+    id: "macbook-pro-14",
+    name: 'MacBook Pro 14"',
+    icon: "/icons/macbook.svg",
+    angles: [
+      {
+        id: "front",
+        name: "Front",
+        frameSrc: "/frames/macbook-pro-14-front.png",
+        thumbnail: "/frames/macbook-pro-14-front.png",
+        // Measured: 461,301 → 3482,2262
+        screenRegion: rect(461, 301, 3482, 2262),
+        screenCornerRadius: 8,
       },
     ],
   },

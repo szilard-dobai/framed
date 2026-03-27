@@ -108,54 +108,72 @@ export function renderMockup(options: RenderOptions): HTMLCanvasElement {
     bottomRight: { x: angle.screenRegion.bottomRight.x + offsetX, y: angle.screenRegion.bottomRight.y + offsetY },
   };
 
-  // 3. Draw the screenshot via perspective transform (more subdivisions for perspective angles)
-  const subdivisions = angle.screenCornerRadius === 0 ? 24 : 12;
-  drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion, subdivisions);
+  // 3. Draw the screenshot via perspective transform
+  drawPerspective(ctx, fitCanvas, bounds.width, bounds.height, offsetRegion, 24);
 
-  // 4. Clip the screenshot to the screen area
+  // 4. Clip the screenshot to the screen area with rounded corners
   if (angle.screenCornerRadius > 0) {
-    // For front-facing views: clip to a rounded rect
-    const rx = Math.min(offsetRegion.topLeft.x, offsetRegion.bottomLeft.x);
-    const ry = Math.min(offsetRegion.topLeft.y, offsetRegion.topRight.y);
-    const rw = Math.max(offsetRegion.topRight.x, offsetRegion.bottomRight.x) - rx;
-    const rh = Math.max(offsetRegion.bottomLeft.y, offsetRegion.bottomRight.y) - ry;
+    const r = angle.screenCornerRadius;
+    const tl = offsetRegion.topLeft;
+    const tr = offsetRegion.topRight;
+    const bl = offsetRegion.bottomLeft;
+    const br = offsetRegion.bottomRight;
 
     const clipCanvas = document.createElement("canvas");
     clipCanvas.width = canvasWidth;
     clipCanvas.height = canvasHeight;
     const clipCtx = clipCanvas.getContext("2d")!;
+
+    // Draw the quad as a path with rounded corners
+    // For each corner, we step inward along both edges by `r` pixels and draw an arc
     clipCtx.beginPath();
-    clipCtx.roundRect(rx, ry, rw, rh, angle.screenCornerRadius);
+
+    // Helper: point along edge from p1 to p2, at distance t (0-1)
+    const lerp = (p1: { x: number; y: number }, p2: { x: number; y: number }, t: number) => ({
+      x: p1.x + (p2.x - p1.x) * t,
+      y: p1.y + (p2.y - p1.y) * t,
+    });
+
+    // Edge lengths for normalizing the radius
+    const edgeLen = (p1: { x: number; y: number }, p2: { x: number; y: number }) =>
+      Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+
+    const topLen = edgeLen(tl, tr);
+    const rightLen = edgeLen(tr, br);
+    const bottomLen = edgeLen(br, bl);
+    const leftLen = edgeLen(bl, tl);
+
+    // Normalized radius as fraction of each edge
+    const tl_top = lerp(tl, tr, r / topLen);
+    const tl_left = lerp(tl, bl, r / leftLen);
+
+    const tr_top = lerp(tr, tl, r / topLen);
+    const tr_right = lerp(tr, br, r / rightLen);
+
+    const br_right = lerp(br, tr, r / rightLen);
+    const br_bottom = lerp(br, bl, r / bottomLen);
+
+    const bl_bottom = lerp(bl, br, r / bottomLen);
+    const bl_left = lerp(bl, tl, r / leftLen);
+
+    // Draw path: top-left corner → top edge → top-right corner → right edge → etc.
+    clipCtx.moveTo(tl_top.x, tl_top.y);
+    clipCtx.lineTo(tr_top.x, tr_top.y);
+    clipCtx.quadraticCurveTo(tr.x, tr.y, tr_right.x, tr_right.y);
+    clipCtx.lineTo(br_right.x, br_right.y);
+    clipCtx.quadraticCurveTo(br.x, br.y, br_bottom.x, br_bottom.y);
+    clipCtx.lineTo(bl_bottom.x, bl_bottom.y);
+    clipCtx.quadraticCurveTo(bl.x, bl.y, bl_left.x, bl_left.y);
+    clipCtx.lineTo(tl_left.x, tl_left.y);
+    clipCtx.quadraticCurveTo(tl.x, tl.y, tl_top.x, tl_top.y);
+    clipCtx.closePath();
+
     clipCtx.fillStyle = "#000";
     clipCtx.fill();
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalCompositeOperation = "destination-in";
     ctx.drawImage(clipCanvas, 0, 0);
-    ctx.globalCompositeOperation = "source-over";
-  } else {
-    // For perspective views: use the frame's own transparency as a mask.
-    // The frame is opaque where the bezel is and transparent where the screen is.
-    // We want to keep screenshot pixels only where the frame is transparent.
-    const maskCanvas = document.createElement("canvas");
-    maskCanvas.width = canvasWidth;
-    maskCanvas.height = canvasHeight;
-    const maskCtx = maskCanvas.getContext("2d")!;
-
-    // Draw the frame
-    maskCtx.drawImage(frameImage, offsetX, offsetY);
-
-    // Invert: make screen area (transparent in frame) opaque, and bezel opaque → transparent
-    const maskData = maskCtx.getImageData(0, 0, canvasWidth, canvasHeight);
-    const mp = maskData.data;
-    for (let i = 0; i < mp.length; i += 4) {
-      mp[i + 3] = mp[i + 3] > 0 ? 0 : 255;
-    }
-    maskCtx.putImageData(maskData, 0, 0);
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.globalCompositeOperation = "destination-in";
-    ctx.drawImage(maskCanvas, 0, 0);
     ctx.globalCompositeOperation = "source-over";
   }
 
