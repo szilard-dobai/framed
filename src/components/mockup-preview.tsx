@@ -51,18 +51,28 @@ export function MockupPreview({
     const container = containerRef.current;
     const maxW = container.clientWidth;
     const maxH = container.clientHeight;
+    const dpr = window.devicePixelRatio || 1;
 
-    const scale = Math.min(maxW / result.width, maxH / result.height, 1);
-    displayCanvas.width = Math.round(result.width * scale);
-    displayCanvas.height = Math.round(result.height * scale);
+    const cssScale = Math.min(maxW / result.width, maxH / result.height, 1);
+    const cssW = Math.round(result.width * cssScale);
+    const cssH = Math.round(result.height * cssScale);
+
+    // Size the backing store for the device pixel ratio
+    displayCanvas.width = Math.round(cssW * dpr);
+    displayCanvas.height = Math.round(cssH * dpr);
+    displayCanvas.style.width = `${cssW}px`;
+    displayCanvas.style.height = `${cssH}px`;
 
     const ctx = displayCanvas.getContext("2d")!;
-    ctx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+    ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.clearRect(0, 0, cssW, cssH);
 
     if (transparent) {
       const size = 10;
-      for (let y = 0; y < displayCanvas.height; y += size) {
-        for (let x = 0; x < displayCanvas.width; x += size) {
+      for (let y = 0; y < cssH; y += size) {
+        for (let x = 0; x < cssW; x += size) {
           ctx.fillStyle =
             (Math.floor(x / size) + Math.floor(y / size)) % 2 === 0
               ? "#e5e5e5"
@@ -72,7 +82,7 @@ export function MockupPreview({
       }
     }
 
-    ctx.drawImage(result, 0, 0, displayCanvas.width, displayCanvas.height);
+    ctx.drawImage(result, 0, 0, cssW, cssH);
   }, [
     screenshot,
     frameImage,
