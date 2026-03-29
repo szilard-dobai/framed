@@ -14,17 +14,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Framed — Device Mockup Generator",
+  title: "Framed - Device Mockup Generator",
   description:
-    "Create beautiful device mockups in seconds. Upload a screenshot, pick a device frame, and download a high-res image — free, instant, no signup.",
+    "Create beautiful device mockups in seconds. Upload a screenshot, pick a device frame, and download a high-res image - free, instant, no signup.",
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "Framed — Device Mockup Generator",
+    title: "Framed - Device Mockup Generator",
     description:
       "Upload a screenshot, pick a device frame, and download a high-res mockup. Free, instant, no signup.",
     type: "website",
@@ -34,13 +32,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Framed — Device Mockup Generator",
+        alt: "Framed - Device Mockup Generator",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Framed — Device Mockup Generator",
+    title: "Framed - Device Mockup Generator",
     description:
       "Upload a screenshot, pick a device frame, and download a high-res mockup. Free, instant, no signup.",
     images: ["/og-image.png"],
