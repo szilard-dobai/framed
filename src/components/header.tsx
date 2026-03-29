@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { ThemeToggle } from "./theme-toggle";
 
 interface HeaderProps {
   canExport: boolean;
@@ -17,14 +18,17 @@ export function Header({ canExport, exporting, onExport }: HeaderProps) {
         <Image src="/favicon.svg" alt="" width={28} height={28} />
         <h1 className="text-xl font-bold">Framed</h1>
       </div>
-      <Button onClick={onExport} disabled={!canExport || exporting} size="sm">
-        {exporting ? (
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-        ) : (
-          <Download className="w-4 h-4 mr-2" />
-        )}
-        {exporting ? "Exporting..." : "Export"}
-      </Button>
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
+        <Button onClick={onExport} disabled={!canExport || exporting} size="sm">
+          {exporting ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2" />
+          )}
+          {exporting ? "Exporting..." : "Export"}
+        </Button>
+      </div>
     </header>
   );
 }

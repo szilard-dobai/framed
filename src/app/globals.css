@@ -71,11 +71,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground;
-    background-color: oklch(0.97 0.01 264.376);
+    @apply text-foreground bg-background;
   }
   html {
-    @apply font-sans;
+    @apply font-sans bg-background;
   }
   button:not(:disabled),
   [role="radio"],
