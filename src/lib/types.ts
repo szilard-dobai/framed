@@ -27,8 +27,3 @@ export interface DeviceConfig {
 }
 
 export type ExportFormat = "png" | "jpeg";
-
-export interface ExportOptions {
-  format: ExportFormat;
-  transparent: boolean;
-}
